@@ -87,6 +87,48 @@ public class UsuarioController {
         return ResponseEntity.notFound().build();
     }
 
+    @PostMapping("{idUsuario}/pedidos/{idPedido}/andamento")
+    @Transactional
+    public ResponseEntity<PedidoModel> setAndamentoPedido(@PathVariable("idUsuario") UUID idUsuario,
+                                                          @PathVariable("idPedido") UUID idPedido) {
+        Optional<UsuarioModel> usuario0 = usuarioRepository.findById(idUsuario);
+        Optional<PedidoModel> pedido0 = pedidoRepository.findById(idPedido);
+
+        if (usuario0.isPresent() && pedido0.isPresent()) {
+            var pedido = pedido0.get();
+
+            if (pedido.getUsuario().getId().equals(idUsuario)) {
+                pedido.setAndamento();
+                pedidoRepository.save(pedido);
+
+                return ResponseEntity.status(HttpStatus.CREATED).body(pedido);
+            }
+        }
+
+        return ResponseEntity.notFound().build();
+    }
+
+    @PostMapping("{idUsuario}/pedidos/{idPedido}/finalizado")
+    @Transactional
+    public ResponseEntity<PedidoModel> setFinalizadoPedido(@PathVariable("idUsuario") UUID idUsuario,
+                                                          @PathVariable("idPedido") UUID idPedido) {
+        Optional<UsuarioModel> usuario0 = usuarioRepository.findById(idUsuario);
+        Optional<PedidoModel> pedido0 = pedidoRepository.findById(idPedido);
+
+        if (usuario0.isPresent() && pedido0.isPresent()) {
+            var pedido = pedido0.get();
+
+            if (pedido.getUsuario().getId().equals(idUsuario)) {
+                pedido.setFinalizado();
+                pedidoRepository.save(pedido);
+
+                return ResponseEntity.status(HttpStatus.CREATED).body(pedido);
+            }
+        }
+
+        return ResponseEntity.notFound().build();
+    }
+
     @GetMapping
     public ResponseEntity<List<UsuarioModel>> getUsuarios() {
         List<UsuarioModel> usuarioList = usuarioRepository.findAll();
