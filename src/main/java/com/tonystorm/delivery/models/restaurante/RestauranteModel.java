@@ -28,6 +28,8 @@ public class RestauranteModel implements Serializable {
 
     private String nome;
 
+    private String senha;
+
     @CNPJ
     private String CNPJ;
 

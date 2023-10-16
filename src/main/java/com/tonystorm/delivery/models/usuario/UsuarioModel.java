@@ -23,11 +23,13 @@ public class UsuarioModel implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
-    @OneToMany(mappedBy = "usuario")
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private List<PedidoModel> pedidos;
 
     private String nome;
+
+    private String senha;
 
     @CPF
     private String CPF;
