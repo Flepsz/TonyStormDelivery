@@ -2,6 +2,7 @@ package com.tonystorm.delivery.services;
 
 import com.tonystorm.delivery.models.restaurante.Localizacao;
 import com.tonystorm.delivery.models.usuario.Endereco;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -13,6 +14,7 @@ public class DistanciaPedidoService {
         this.restaurante = restaurante;
         this.usuario = usuario;
     }
+
 
     public double calcular() {
         double x1 = restaurante.getX();
