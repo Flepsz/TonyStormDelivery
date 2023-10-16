@@ -38,6 +38,7 @@ public class DataInitializer implements CommandLineRunner {
     public void run(String... args) throws Exception {
         var rCalabreso = new RestauranteModel();
         rCalabreso.setNome("Calabreso's Churrascaria");
+        rCalabreso.setSenha("696969");
         rCalabreso.setCNPJ("10446214000140");
         rCalabreso.setLocalizacao(new Localizacao(43.99, 55.23));
         restauranteRepository.save(rCalabreso);
@@ -61,6 +62,7 @@ public class DataInitializer implements CommandLineRunner {
 
         var usuario = new UsuarioModel();
         usuario.setNome("Ludmillo");
+        usuario.setSenha("linguico123");
         usuario.setCPF("98619782088");
         usuario.setEndereco(new Endereco(22.32, 55.44));
 
@@ -69,5 +71,7 @@ public class DataInitializer implements CommandLineRunner {
         var pedido1 = new PedidoModel();
         pedido1.setUsuario(usuario);
         pedido1.setComidas(comidas);
+
+        pedidoRepository.save(pedido1);
     }
 }
