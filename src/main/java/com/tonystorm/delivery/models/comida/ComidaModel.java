@@ -20,7 +20,7 @@ import java.util.UUID;
 public class ComidaModel implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private UUID idComida;
+    private UUID id;
 
     @JsonBackReference
     @ManyToOne

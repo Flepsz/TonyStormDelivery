@@ -23,7 +23,7 @@ import java.util.UUID;
 public class PedidoModel implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private UUID idPedido;
+    private UUID id;
 
     @ManyToOne
     @JoinColumn(name = "idUsuario")
@@ -31,13 +31,15 @@ public class PedidoModel implements Serializable {
 
     @ManyToMany
     @JoinTable(
-            name = "pedidoComida",
-            joinColumns = @JoinColumn(name = "pedidoId"),
-            inverseJoinColumns = @JoinColumn(name = "comidaId")
+            name = "pedido_comida",
+            joinColumns = @JoinColumn(name = "pedido_id"),
+            inverseJoinColumns = @JoinColumn(name = "comida_id")
     )
     private List<ComidaModel> comidas;
 
     private Double precoTotal;
+
+    private Double distancia;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING)
     @Enumerated(EnumType.STRING)

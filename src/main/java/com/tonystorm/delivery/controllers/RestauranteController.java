@@ -5,6 +5,7 @@ import com.tonystorm.delivery.dtos.RestauranteDto;
 import com.tonystorm.delivery.models.comida.ComidaModel;
 import com.tonystorm.delivery.models.restaurante.RestauranteModel;
 import com.tonystorm.delivery.repositories.ComidaRepository;
+import com.tonystorm.delivery.repositories.PedidoComidaRepository;
 import com.tonystorm.delivery.repositories.RestauranteRepository;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
@@ -28,10 +29,14 @@ public class RestauranteController {
     @Autowired
     private ComidaRepository comidaRepository;
 
+    @Autowired
+    private PedidoComidaRepository pedidoComidaRepository;
+
     @PostMapping
     @Transactional
-    public ResponseEntity<?> cadastrarRestaurante(@RequestBody @Valid RestauranteDto restauranteDto) {
+    public ResponseEntity<Object> postRestaurante(@RequestBody @Valid RestauranteDto restauranteDto) {
         if (restauranteRepository.findByNome(restauranteDto.nome()) != null) {
+
             return ResponseEntity.status(HttpStatus.CONFLICT).body("Restaurante com o mesmo nome já existe.");
         }
 
@@ -45,7 +50,7 @@ public class RestauranteController {
 
     @PostMapping("/{id}/comidas")
     @Transactional
-    public ResponseEntity<ComidaModel> cadastrarComida(@PathVariable(value = "id") UUID id,
+    public ResponseEntity<ComidaModel> postComida(@PathVariable(value = "id") UUID id,
                                                        @RequestBody @Valid ComidaDto comidaDto) {
         Optional<RestauranteModel> restauranteOptional = restauranteRepository.findById(id);
 
@@ -60,21 +65,22 @@ public class RestauranteController {
             ComidaModel novaComida = comidaRepository.save(comida);
 
             return ResponseEntity.status(HttpStatus.CREATED).body(comidaRepository.save(comida));
-        } else {
-            return ResponseEntity.notFound().build();
         }
+
+        return ResponseEntity.notFound().build();
     }
 
     @GetMapping
-    public ResponseEntity<List<RestauranteModel>> buscarTodosRestaurantes() {
+    public ResponseEntity<List<RestauranteModel>> getAllRestaurantes() {
         List<RestauranteModel> restauranteList = restauranteRepository.findAll();
 
         return ResponseEntity.status(HttpStatus.OK).body(restauranteList);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Object> buscarUmRestaurtante(@PathVariable(value = "id") UUID id) {
+    public ResponseEntity<Object> getOneRestaurante(@PathVariable(value = "id") UUID id) {
         Optional<RestauranteModel> restaurante0 = restauranteRepository.findById(id);
+
         if (restaurante0.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Restaurante não encontrado");
         }
@@ -83,51 +89,70 @@ public class RestauranteController {
     }
 
     @GetMapping("/{id}/comidas")
-    public ResponseEntity<List<ComidaModel>> getComidasDoRestaurante(@PathVariable(value = "id") UUID id) {
+    public ResponseEntity<List<ComidaModel>> getAllComidas(@PathVariable(value = "id") UUID id) {
         Optional<RestauranteModel> restauranteOptional = restauranteRepository.findById(id);
 
         if (restauranteOptional.isPresent()) {
-            RestauranteModel restaurante = restauranteOptional.get();
+            var restaurante = restauranteOptional.get();
             List<ComidaModel> comidas = restaurante.getComidas();
+
             return ResponseEntity.status(HttpStatus.OK).body(comidas);
-        } else {
-            return ResponseEntity.notFound().build();
         }
+
+        return ResponseEntity.notFound().build();
+    }
+
+    @GetMapping("/{idRestaurante}/comidas/{idComida}")
+    public ResponseEntity<Object> getUmaComidaById(@PathVariable("idRestaurante") UUID idRestaurante,
+                                                   @PathVariable("idComida") UUID idComida) {
+        Optional<RestauranteModel> restaurante0 = restauranteRepository.findById(idRestaurante);
+        Optional<ComidaModel> comida0 = comidaRepository.findById(idComida);
+
+        if (restaurante0.isPresent() && comida0.isPresent()) {
+            var comida = comida0.get();
+
+            return ResponseEntity.status(HttpStatus.OK).body(comida);
+        }
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Restaurante ou comida não encontrada.");
     }
 
     @DeleteMapping("/{id}")
     @Transactional
     public ResponseEntity<Object> deletarRestaurante(@PathVariable(value = "id") UUID id) {
         Optional<RestauranteModel> restaurante0 = restauranteRepository.findById(id);
-        if (restaurante0.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Restaurante não encontrado.");
+
+        if (restaurante0.isPresent()) {
+            var restaurante = restaurante0.get();
+            restauranteRepository.delete(restaurante);
+
+            return ResponseEntity.status(HttpStatus.OK).body("Restaurante deletado com sucesso!");
         }
-        restauranteRepository.delete(restaurante0.get());
-        return ResponseEntity.status(HttpStatus.OK).body("Restaurante deletado com sucesso!");
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Restaurante não encontrado.");
     }
 
     @DeleteMapping("/{idRestaurante}/comidas/{idComida}")
     @Transactional
-    public ResponseEntity<Object> deletarComida(@PathVariable("idRestaurante") UUID idRestaurante, @PathVariable("idComida") UUID idComida) {
+    public ResponseEntity<Object> deleteComida(@PathVariable("idRestaurante") UUID idRestaurante,
+                                                @PathVariable("idComida") UUID idComida) {
         Optional<RestauranteModel> restaurante0 = restauranteRepository.findById(idRestaurante);
-        if (restaurante0.isPresent()) {
-            var restaurante = restaurante0.get();
+        Optional<ComidaModel> comida0 = comidaRepository.findById(idComida);
 
-            ComidaModel comidaToDelete = null;
-            for (ComidaModel comida : restaurante.getComidas()) {
-                if (comida.getIdComida().equals(idComida)) {
-                    comidaToDelete = comida;
-                    break;
+        if (restaurante0.isPresent() && comida0.isPresent()) {
+                var comida = comida0.get();
+                removerReferenciasEmPedidoComida(idComida);
+
+                if (comida.getRestaurante().getId().equals(idRestaurante)) {
+                    comidaRepository.delete(comida);
+
+                    return ResponseEntity.status(HttpStatus.OK).body("Comida removida com sucesso");
                 }
-            }
-            if (comidaToDelete != null) {
-                restaurante.getComidas().remove(comidaToDelete);
-                restauranteRepository.save(restaurante);
-                return ResponseEntity.status(HttpStatus.OK).body("Comida removida com sucesso");
-            } else {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Comida não encontrada.");
-            }
         }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Restaurante não encontrado.");
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Restaurante ou comida não encontrada.");
+    }
+
+    private void removerReferenciasEmPedidoComida(UUID idComida) {
+        pedidoComidaRepository.deleteByComidaId(idComida);
     }
 }

@@ -24,7 +24,7 @@ public class RestauranteModel implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private UUID idRestaurante;
+    private UUID id;
 
     private String nome;
 

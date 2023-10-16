@@ -21,7 +21,7 @@ public class UsuarioModel implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private UUID idUsuario;
+    private UUID id;
 
     @OneToMany(mappedBy = "usuario")
     @JsonIgnore
