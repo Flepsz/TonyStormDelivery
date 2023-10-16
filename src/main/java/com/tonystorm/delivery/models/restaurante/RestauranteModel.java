@@ -1,12 +1,13 @@
 package com.tonystorm.delivery.models.restaurante;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.tonystorm.delivery.models.comida.ComidaModel;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.br.CNPJ;
 
 import java.io.Serializable;
 import java.util.List;
@@ -24,13 +25,15 @@ public class RestauranteModel implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID idRestaurante;
-    @Length(min = 3, max = 45)
+
     private String nome;
 
-    @Column(unique=true, length = 11)
-    @Length (min = 11, max = 11)
+    @CNPJ
     private String CNPJ;
+
     private Localizacao localizacao;
-    @OneToMany(mappedBy = "restaurante")
+
+    @JsonManagedReference
+    @OneToMany(mappedBy = "restaurante", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<ComidaModel> comidas;
 }

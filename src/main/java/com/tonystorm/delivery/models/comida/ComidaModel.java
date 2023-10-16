@@ -1,5 +1,6 @@
 package com.tonystorm.delivery.models.comida;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.tonystorm.delivery.models.restaurante.RestauranteModel;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -20,9 +21,13 @@ public class ComidaModel implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID idComida;
+
+    @JsonBackReference
     @ManyToOne
     @JoinColumn(name = "idRestaurante")
     private RestauranteModel restaurante;
+
     private String nome;
+
     private Double preco;
 }

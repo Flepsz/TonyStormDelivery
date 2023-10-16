@@ -1,9 +1,10 @@
 package com.tonystorm.delivery.models.usuario;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.tonystorm.delivery.models.pedido.PedidoModel;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.br.CPF;
 
 import java.io.Serializable;
 import java.util.List;
@@ -21,12 +22,15 @@ public class UsuarioModel implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID idUsuario;
+
     @OneToMany(mappedBy = "usuario")
+    @JsonIgnore
     private List<PedidoModel> pedidos;
-    @Length (min = 3, max = 45)
+
     private String nome;
-    @Column(unique=true, length = 11)
-    @Length (min = 11, max = 11)
+
+    @CPF
     private String CPF;
+
     private Endereco endereco;
 }
