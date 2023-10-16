@@ -52,4 +52,12 @@ public class PedidoModel implements Serializable {
             this.status = Status.ANDAMENTO;
         }
     }
+
+    public void setAndamento() {
+        this.status = Status.ANDAMENTO;
+    }
+
+    public void setFinalizado() {
+        this.status = Status.FINALIZADO;
+    }
 }
