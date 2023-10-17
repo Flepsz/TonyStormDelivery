@@ -31,6 +31,7 @@ public class RestauranteModel implements Serializable {
     private String senha;
 
     @CNPJ
+    @Column(unique = true)
     private String cnpj;
 
     private Localizacao localizacao;
