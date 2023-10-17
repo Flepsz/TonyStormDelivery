@@ -8,7 +8,13 @@ public record RestauranteDto(
         @NotBlank
         String nome,
         @NotBlank
-        String CNPJ,
+        String senha,
+        @NotBlank
+        String cnpj,
         @NotNull
         Localizacao localizacao) {
+        public RestauranteDto() {
+                this(null, null, null, null);
+        }
+
 }

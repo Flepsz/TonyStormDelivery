@@ -7,10 +7,12 @@ import jakarta.validation.constraints.NotNull;
 public record UsuarioDto(
         @NotBlank
         String nome,
-
         @NotBlank
-        String CPF,
-
+        String senha,
+        @NotBlank
+        String cpf,
         @NotNull
         Endereco endereco) {
+
+
 }

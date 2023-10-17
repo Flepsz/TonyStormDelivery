@@ -10,6 +10,7 @@ import com.tonystorm.delivery.repositories.ComidaRepository;
 import com.tonystorm.delivery.repositories.PedidoRepository;
 import com.tonystorm.delivery.repositories.RestauranteRepository;
 import com.tonystorm.delivery.repositories.UsuarioRepository;
+import com.tonystorm.delivery.services.CalculadoraPedidoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
@@ -23,23 +24,30 @@ public class DataInitializer implements CommandLineRunner {
     private final RestauranteRepository restauranteRepository;
     private final UsuarioRepository usuarioRepository;
     private final PedidoRepository pedidoRepository;
+    private final CalculadoraPedidoService calculadoraPedidoService;
+    private boolean initialized = false;
 
 
     @Autowired
     public DataInitializer(ComidaRepository comidaRepository, RestauranteRepository restauranteRepository,
-                           UsuarioRepository usuarioRepository, PedidoRepository pedidoRepository) {
+                           UsuarioRepository usuarioRepository, PedidoRepository pedidoRepository,
+                           CalculadoraPedidoService calculadoraPedidoService) {
         this.comidaRepository = comidaRepository;
         this.restauranteRepository = restauranteRepository;
         this.usuarioRepository = usuarioRepository;
         this.pedidoRepository = pedidoRepository;
+        this.calculadoraPedidoService = calculadoraPedidoService;
     }
 
     @Override
     public void run(String... args) throws Exception {
+        if (initialized) {
+            return;
+        }
         var rCalabreso = new RestauranteModel();
         rCalabreso.setNome("Calabreso's Churrascaria");
         rCalabreso.setSenha("696969");
-        rCalabreso.setCNPJ("10446214000140");
+        rCalabreso.setCnpj("10446214000140");
         rCalabreso.setLocalizacao(new Localizacao(43.99, 55.23));
         restauranteRepository.save(rCalabreso);
 
@@ -63,7 +71,7 @@ public class DataInitializer implements CommandLineRunner {
         var usuario = new UsuarioModel();
         usuario.setNome("Ludmillo");
         usuario.setSenha("linguico123");
-        usuario.setCPF("98619782088");
+        usuario.setCpf("98619782088");
         usuario.setEndereco(new Endereco(22.32, 55.44));
 
         usuarioRepository.save(usuario);
@@ -72,6 +80,10 @@ public class DataInitializer implements CommandLineRunner {
         pedido1.setUsuario(usuario);
         pedido1.setComidas(comidas);
 
+        pedido1 = calculadoraPedidoService.calcularPedido(pedido1);
+
         pedidoRepository.save(pedido1);
+
+        initialized = true;
     }
 }

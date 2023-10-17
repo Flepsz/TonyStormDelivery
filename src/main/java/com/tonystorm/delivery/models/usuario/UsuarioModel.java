@@ -32,7 +32,7 @@ public class UsuarioModel implements Serializable {
     private String senha;
 
     @CPF
-    private String CPF;
+    private String cpf;
 
     private Endereco endereco;
 }
