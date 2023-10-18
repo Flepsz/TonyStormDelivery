@@ -2,6 +2,7 @@ package com.tonystorm.delivery.components;
 
 import com.tonystorm.delivery.models.comida.ComidaModel;
 import com.tonystorm.delivery.models.pedido.PedidoModel;
+import com.tonystorm.delivery.models.pedido.Status;
 import com.tonystorm.delivery.models.restaurante.Localizacao;
 import com.tonystorm.delivery.models.restaurante.RestauranteModel;
 import com.tonystorm.delivery.models.usuario.Endereco;
@@ -45,26 +46,39 @@ public class DataInitializer implements CommandLineRunner {
             return;
         }
         var rCalabreso = new RestauranteModel();
-        rCalabreso.setNome("Calabreso's Churrascaria");
-        rCalabreso.setSenha("696969");
+        rCalabreso.setNome("Calabreso");
+        rCalabreso.setSenha("6969");
         rCalabreso.setCnpj("10446214000140");
         rCalabreso.setLocalizacao(new Localizacao(43.99, 55.23));
         restauranteRepository.save(rCalabreso);
+
+        var bbRestaurante = new RestauranteModel();
+        bbRestaurante.setNome("BB");
+        bbRestaurante.setSenha("123");
+        bbRestaurante.setCnpj("30229906000143");
+        bbRestaurante.setLocalizacao(new Localizacao(23.99, 33.53));
+        restauranteRepository.save(bbRestaurante);
 
         List<ComidaModel> comidas = new ArrayList<>();
 
         var pizza = new ComidaModel();
         pizza.setNome("Pizza");
-        pizza.setPreco(10.99);
+        pizza.setPreco(32.99);
         pizza.setRestaurante(rCalabreso);
         comidas.add(pizza);
 
         var hamburger = new ComidaModel();
         hamburger.setNome("Hamburguer");
-        hamburger.setPreco(5.99);
+        hamburger.setPreco(14.89);
         hamburger.setRestaurante(rCalabreso);
         comidas.add(hamburger);
 
+        var coracao = new ComidaModel();
+        coracao.setNome("Calma coração");
+        coracao.setPreco(8.99);
+        coracao.setRestaurante(bbRestaurante);
+
+        comidaRepository.save(coracao);
         comidaRepository.save(pizza);
         comidaRepository.save(hamburger);
 
@@ -79,6 +93,7 @@ public class DataInitializer implements CommandLineRunner {
         var pedido1 = new PedidoModel();
         pedido1.setUsuario(usuario);
         pedido1.setComidas(comidas);
+        pedido1.setStatus(Status.ANDAMENTO);
 
         pedido1 = calculadoraPedidoService.calcularPedido(pedido1);
 

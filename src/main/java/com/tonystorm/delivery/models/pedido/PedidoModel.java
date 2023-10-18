@@ -45,14 +45,6 @@ public class PedidoModel implements Serializable {
     @Enumerated(EnumType.STRING)
     private Status status;
 
-
-    @PrePersist
-    public void prePersist() {
-        if (this.status == null) {
-            this.status = Status.ANDAMENTO;
-        }
-    }
-
     public void setAndamento() {
         this.status = Status.ANDAMENTO;
     }

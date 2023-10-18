@@ -3,9 +3,11 @@ package com.tonystorm.delivery.controllers;
 import com.tonystorm.delivery.dtos.ComidaDto;
 import com.tonystorm.delivery.dtos.RestauranteDto;
 import com.tonystorm.delivery.models.comida.ComidaModel;
+import com.tonystorm.delivery.models.pedido.PedidoModel;
 import com.tonystorm.delivery.models.restaurante.RestauranteModel;
 import com.tonystorm.delivery.repositories.ComidaRepository;
 import com.tonystorm.delivery.repositories.PedidoComidaRepository;
+import com.tonystorm.delivery.repositories.PedidoRepository;
 import com.tonystorm.delivery.repositories.RestauranteRepository;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
@@ -15,6 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -31,6 +34,9 @@ public class RestauranteController {
 
     @Autowired
     private PedidoComidaRepository pedidoComidaRepository;
+
+    @Autowired
+    private PedidoRepository pedidoRepository;
 
     @PostMapping
     @Transactional
@@ -115,6 +121,25 @@ public class RestauranteController {
         }
 
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Restaurante ou comida não encontrada.");
+    }
+
+    @GetMapping("/{id}/pedidos")
+    public ResponseEntity<List<PedidoModel>> getPedidosFromRestaurante(@PathVariable(value = "id") UUID id) {
+        Optional<RestauranteModel> restaurante0 = restauranteRepository.findById(id);
+
+        if (restaurante0.isPresent()) {
+            List<PedidoModel> todosPedidos = pedidoRepository.findAll();
+
+            List<PedidoModel> pedidosDoRestaurante = new ArrayList<>();
+            for (PedidoModel pedido : todosPedidos) {
+                if (pedido.getComidas().get(0).getRestaurante().getId().equals(id)) {
+                    pedidosDoRestaurante.add(pedido);
+                }
+            }
+
+            return ResponseEntity.status(HttpStatus.OK).body(pedidosDoRestaurante);
+        }
+        return ResponseEntity.notFound().build();
     }
 
     @DeleteMapping("/{id}")

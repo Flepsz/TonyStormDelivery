@@ -4,6 +4,7 @@ import com.tonystorm.delivery.dtos.PedidoDto;
 import com.tonystorm.delivery.dtos.UsuarioDto;
 import com.tonystorm.delivery.models.comida.ComidaModel;
 import com.tonystorm.delivery.models.pedido.PedidoModel;
+import com.tonystorm.delivery.models.pedido.Status;
 import com.tonystorm.delivery.models.restaurante.RestauranteModel;
 import com.tonystorm.delivery.models.usuario.UsuarioModel;
 import com.tonystorm.delivery.repositories.ComidaRepository;
@@ -78,6 +79,7 @@ public class UsuarioController {
             pedido.setPrecoTotal(precoTotal);
             pedido.setComidas(comidas);
             pedido.setDistancia(distancia);
+            pedido.setStatus(Status.ANDAMENTO);
 
             PedidoModel novoPedido = pedidoRepository.save(pedido);
 
