@@ -3,6 +3,7 @@ package com.tonystorm.delivery.models.pedido;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.tonystorm.delivery.dtos.PedidoDto;
 import com.tonystorm.delivery.models.comida.ComidaModel;
+import com.tonystorm.delivery.models.itemPedido.ItemPedido;
 import com.tonystorm.delivery.models.usuario.UsuarioModel;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -12,6 +13,7 @@ import lombok.Setter;
 import org.springframework.beans.factory.annotation.Value;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -28,19 +30,23 @@ public class PedidoModel implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private UUID id;
+    private Long id;
 
     @ManyToOne
     @JoinColumn(name = "idUsuario")
     private UsuarioModel usuario;
 
-    @ManyToMany
-    @JoinTable(
-            name = "pedido_comida",
-            joinColumns = @JoinColumn(name = "pedido_id"),
-            inverseJoinColumns = @JoinColumn(name = "comida_id")
-    )
-    private List<ComidaModel> comidas;
+//    @ManyToMany
+//    @JoinTable(
+//            name = "pedido_comida",
+//            joinColumns = @JoinColumn(name = "pedido_id"),
+//            inverseJoinColumns = @JoinColumn(name = "comida_id")
+//    )
+//    private List<ComidaModel> comidas;
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "pedido_id")
+    private List<ItemPedido> itens = new ArrayList<>();
 
     private Double precoTotal;
 

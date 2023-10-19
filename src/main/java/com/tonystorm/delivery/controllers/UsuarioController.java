@@ -73,7 +73,7 @@ public class UsuarioController {
 
             pedido.setUsuario(usuario);
             pedido.setPrecoTotal(precoTotal);
-            pedido.setComidas(comidas);
+//            pedido.setComidas(comidas);
             pedido.setDistancia(distancia);
 
             PedidoModel novoPedido = pedidoRepository.save(pedido);
