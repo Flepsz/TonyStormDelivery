@@ -62,10 +62,6 @@ public class UsuarioController {
 
             List<ComidaModel> comidas = comidaRepository.findAllById(comidasIds);
 
-            if (comidas.size() != comidasIds.size()) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Nem todas as comidas foram encontradas com os IDs especificados");
-            }
-
             RestauranteModel restaurante = comidas.get(0).getRestaurante();
 
             var distancia = new DistanciaPedidoService(restaurante.getLocalizacao(), usuario.getEndereco()).calcular();
