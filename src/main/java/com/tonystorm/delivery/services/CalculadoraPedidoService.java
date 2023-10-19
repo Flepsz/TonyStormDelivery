@@ -18,7 +18,6 @@ public class CalculadoraPedidoService {
 
         pedido.setPrecoTotal(precoTotal);
         pedido.setDistancia(distancia);
-        pedido.setStatus(Status.ANDAMENTO);
 
         return pedido;
     }

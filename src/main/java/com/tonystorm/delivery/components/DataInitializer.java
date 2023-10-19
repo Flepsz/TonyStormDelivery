@@ -93,7 +93,7 @@ public class DataInitializer implements CommandLineRunner {
         var pedido1 = new PedidoModel();
         pedido1.setUsuario(usuario);
         pedido1.setComidas(comidas);
-        pedido1.setStatus(Status.ANDAMENTO);
+        pedido1.setAndamento();
 
         pedido1 = calculadoraPedidoService.calcularPedido(pedido1);
 

@@ -9,6 +9,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.io.Serializable;
 import java.util.List;
@@ -19,8 +20,12 @@ import java.util.UUID;
 @Getter
 @Setter
 @AllArgsConstructor
-@NoArgsConstructor
 public class PedidoModel implements Serializable {
+
+    public PedidoModel() {
+        setAndamento();
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
@@ -41,15 +46,13 @@ public class PedidoModel implements Serializable {
 
     private Double distancia;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING)
-    @Enumerated(EnumType.STRING)
-    private Status status;
+    private String status;
 
     public void setAndamento() {
-        this.status = Status.ANDAMENTO;
+        this.status = "Em Andamento";
     }
 
     public void setFinalizado() {
-        this.status = Status.FINALIZADO;
+        this.status = "Finalizado";
     }
 }
