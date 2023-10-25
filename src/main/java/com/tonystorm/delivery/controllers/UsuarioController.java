@@ -3,8 +3,8 @@ package com.tonystorm.delivery.controllers;
 import com.tonystorm.delivery.dtos.PedidoDto;
 import com.tonystorm.delivery.dtos.UsuarioDto;
 import com.tonystorm.delivery.models.comida.ComidaModel;
+import com.tonystorm.delivery.models.itemPedido.ItemPedido;
 import com.tonystorm.delivery.models.pedido.PedidoModel;
-import com.tonystorm.delivery.models.pedido.Status;
 import com.tonystorm.delivery.models.restaurante.RestauranteModel;
 import com.tonystorm.delivery.models.usuario.UsuarioModel;
 import com.tonystorm.delivery.repositories.ComidaRepository;
@@ -54,26 +54,30 @@ public class UsuarioController {
 
         if (usuarioOptional.isPresent()) {
             UsuarioModel usuario = usuarioOptional.get();
-            List<UUID> comidasIds = pedidoDto.getComidas();
+            List<ItemPedido> itensPedido = pedidoDto.getItensPedido();
 
-            if (comidasIds.isEmpty()) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("A lista de IDs de comidas está vazia");
+            if (itensPedido.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("A lista de itens do pedidos está vazia");
             }
 
-            List<ComidaModel> comidas = comidaRepository.findAllById(comidasIds);
+            for (ItemPedido itemPedido: itensPedido) {
+                ComidaModel comida = itemPedido.getComida();
 
-            RestauranteModel restaurante = comidas.get(0).getRestaurante();
+                itemPedido.setSubTotal(comida.getPreco() * itemPedido.getQuantidade());
+            }
 
+            Optional<ComidaModel> comida = comidaRepository.findById(itensPedido.get(0).getComida().getId());
+            RestauranteModel restaurante = comida.get().getRestaurante();
             var distancia = new DistanciaPedidoService(restaurante.getLocalizacao(), usuario.getEndereco()).calcular();
 
-            Double precoTotal = comidas.stream().mapToDouble(ComidaModel::getPreco).sum();
+            Double precoTotal = itensPedido.stream().mapToDouble(ItemPedido::getSubTotal).sum();
 
             var pedido = new PedidoModel();
             BeanUtils.copyProperties(pedidoDto, pedido);
 
             pedido.setUsuario(usuario);
+            pedido.setItensPedido(itensPedido);
             pedido.setPrecoTotal(precoTotal);
-            pedido.setComidas(comidas);
             pedido.setDistancia(distancia);
 
             PedidoModel novoPedido = pedidoRepository.save(pedido);
