@@ -1,5 +1,6 @@
 package com.tonystorm.delivery.dtos;
 
+import com.tonystorm.delivery.models.itemPedido.ItemPedido;
 import com.tonystorm.delivery.models.pedido.Status;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -11,9 +12,9 @@ import java.util.UUID;
 public record PedidoDto(
         @NotNull
         @NotEmpty
-        List<UUID> comidas
+        List<ItemPedido> itensPedido
 ) {
-        public List<UUID> getComidas() {
-                return comidas;
+        public List<ItemPedido> getItensPedido() {
+                return itensPedido;
         }
 }

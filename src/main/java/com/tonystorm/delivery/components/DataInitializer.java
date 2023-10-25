@@ -1,6 +1,7 @@
 package com.tonystorm.delivery.components;
 
 import com.tonystorm.delivery.models.comida.ComidaModel;
+import com.tonystorm.delivery.models.itemPedido.ItemPedido;
 import com.tonystorm.delivery.models.pedido.PedidoModel;
 import com.tonystorm.delivery.models.pedido.Status;
 import com.tonystorm.delivery.models.restaurante.Localizacao;
@@ -90,9 +91,16 @@ public class DataInitializer implements CommandLineRunner {
 
         usuarioRepository.save(usuario);
 
+        var itemPedido = new ItemPedido();
+        itemPedido.setComida(pizza);
+        itemPedido.setQuantidade(3);
+
+        List<ItemPedido> itensPedidos = new ArrayList<>();
+        itensPedidos.add(itemPedido);
+
         var pedido1 = new PedidoModel();
         pedido1.setUsuario(usuario);
-        pedido1.setComidas(comidas);
+        pedido1.setItensPedido(itensPedidos);
         pedido1.setAndamento();
 
         pedido1 = calculadoraPedidoService.calcularPedido(pedido1);

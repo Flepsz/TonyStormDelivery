@@ -132,7 +132,7 @@ public class RestauranteController {
 
             List<PedidoModel> pedidosDoRestaurante = new ArrayList<>();
             for (PedidoModel pedido : todosPedidos) {
-                if (pedido.getComidas().get(0).getRestaurante().getId().equals(id)) {
+                if (pedido.getItensPedido().get(0).getComida().getRestaurante().getId().equals(id)) {
                     pedidosDoRestaurante.add(pedido);
                 }
             }
