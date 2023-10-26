@@ -4,12 +4,14 @@ import com.tonystorm.delivery.models.comida.ComidaModel;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Embeddable
+@Entity
 @Getter
 @Setter
 @AllArgsConstructor
+@NoArgsConstructor
 public class ItemPedido {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -17,5 +19,8 @@ public class ItemPedido {
 
     @ManyToOne
     private ComidaModel comida;
+
     private int quantidade;
+
+    private Double subTotal;
 }
